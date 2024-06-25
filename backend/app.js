@@ -4,6 +4,7 @@ import userRoutes from "./routes/user.routes.js";
 import postRoutes from "./routes/post.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import dotenv from "dotenv";
+import cors from "cors";
 import { v2 as cloudinary } from "cloudinary";
 dotenv.config();
 import connectMongoDB from "./dbConfig/connectMongoDB.js";
@@ -14,7 +15,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_SECRET_KEY,
 });
 const app = express();
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

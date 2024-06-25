@@ -4,6 +4,13 @@ import * as bcrypt from "bcrypt";
 export const signup = async (req, res) => {
   try {
     const { fullName, username, email, password } = req.body;
+    if (!fullName || !username || !email || !password) {
+      return res.status(400).json({
+        status: 400,
+        message: "All fields are require",
+        error: {},
+      });
+    }
     console.log(req.body);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -41,11 +48,16 @@ export const signup = async (req, res) => {
       password: hashedPassword,
     });
     await user.save();
-    const userData = await user.toObject();
-
+    console.log("first");
+    const userData = user.toObject();
+    console.log("first, ", userData);
     if (user) {
       generateTokenAndSerCookie(user._id, res);
       delete userData.password;
+      console.log("message");
+      console.log("message");
+      console.log("message");
+      console.log("message");
       return res.status(201).json({
         status: 201,
         message: "User Created",
@@ -66,6 +78,13 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({
+        status: 400,
+        message: "All fields are require",
+        error: {},
+      });
+    }
     const user = await User.findOne({ username: username });
     if (!user) {
       return res
@@ -103,7 +122,7 @@ export const logout = async (req, res) => {
     return res.status(200).json({
       status: 200,
       message: "Logged out succesfullt",
-      data: userData,
+      data: {},
     });
   } catch (err) {
     console.log(err);
