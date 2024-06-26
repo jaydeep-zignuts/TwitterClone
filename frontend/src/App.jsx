@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import HomePage from "./pages/home/HomePage";
 import LoginPage from "./pages/auth/Login/LoginPage";
 import SignupPage from "./pages/auth/signup/SignupPage";
@@ -11,26 +11,33 @@ import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./components/common/LoadingSpinner";
 
 function App() {
-  const {
-    data: authUser,
-    isLoading,
-    error,
-    isError,
-  } = useQuery({
+  const { data: authUser, isLoading } = useQuery({
     queryKey: ["authUser"],
     queryFn: async () => {
       try {
         const res = await fetch("/api/auth/me");
         const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.error || "Somethin went wrong!!");
+        if (data.error) {
+          return null;
         }
+
+        if (!res.ok) {
+          console.log("resnot");
+          // throw new Error(data.error || "Something went wrong");
+          return null;
+        }
+        console.log("authUser is here:", data);
+
         return data;
       } catch (error) {
-        throw new Error(error);
+        console.log("error", error);
+        // throw new Error(error);
+        return null;
       }
     },
+    retry: false,
   });
+
   if (isLoading) {
     return (
       <div className="h-screen flex justify-center items-center">
