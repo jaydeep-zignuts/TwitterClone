@@ -24,15 +24,20 @@ export const createPost = async (req, res) => {
       });
     }
     if (img) {
-      const uploadedResponse = cloudinary.uploader.upload(img);
-      img = uploadedResponse.secure_url;
+      console.log("img here");
+      const uploadedResponse = await cloudinary.uploader.upload(img);
+      console.log(uploadedResponse);
+
+      img = await uploadedResponse.secure_url;
+      console.log(img);
     }
 
-    const post = new Post({
+    const post = await new Post({
       user: userId,
-      text,
-      img,
+      text: text,
+      img: img,
     });
+    console.log("first", post);
     await post.save();
     return res.status(201).json({
       status: 201,

@@ -85,6 +85,7 @@ const Post = ({ post }) => {
           </div>
           <div className="flex flex-col gap-3 overflow-hidden">
             <span>{post.text}</span>
+            {console.log("post.img,post.img", post)}
             {post.img && (
               <img
                 src={post.img}
