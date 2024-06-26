@@ -26,7 +26,6 @@ function App() {
           // throw new Error(data.error || "Something went wrong");
           return null;
         }
-        console.log("authUser is here:", data);
 
         return data;
       } catch (error) {

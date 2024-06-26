@@ -36,6 +36,7 @@ const Posts = ({ feedType }) => {
       }
     },
   });
+  console.log("first=-v", posts);
   useEffect(() => {
     refetch();
   }, [feedType, refetch]);
