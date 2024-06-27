@@ -3,7 +3,7 @@ import { BiRepost } from "react-icons/bi";
 import { FaRegHeart } from "react-icons/fa";
 import { FaRegBookmark } from "react-icons/fa6";
 import { FaTrash } from "react-icons/fa";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -47,6 +47,7 @@ const Post = ({ post }) => {
           // throw new Error(data.error || "something went wrong");
           return data.error;
         }
+        console.log("dataehjkl", data);
         return data;
       } catch (error) {
         console.log("like error catch");
@@ -56,9 +57,11 @@ const Post = ({ post }) => {
       }
     },
     onSuccess: (updatedLikes) => {
+      console.log("updatedLikes", updatedLikes);
       // queryClient.invalidateQueries({ queryKey: ["posts"] });
       queryClient.setQueryData(["posts"], (oldData) => {
-        const newData = oldData.data.map((p) => {
+        console.log("oldData=-", oldData);
+        const newData = oldData?.data?.map((p) => {
           if (p._id === post._id) {
             return { ...p, likes: updatedLikes };
           }
@@ -71,7 +74,7 @@ const Post = ({ post }) => {
       });
     },
     onError: (error) => {
-      console.log(" error =-");
+      console.log(" error =-", error);
       toast.error(error.messgae);
     },
   });
@@ -214,7 +217,6 @@ const Post = ({ post }) => {
                         No comments yet 🤔 Be the first one 😉
                       </p>
                     )}
-                    {console.log("post.comments", post.comments)}
                     {post.comments.map((comment) => (
                       <div key={comment._id} className="flex gap-2 items-start">
                         <div className="avatar">

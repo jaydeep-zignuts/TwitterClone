@@ -4,33 +4,53 @@ import LoadingSpinner from "../../components/common/LoadingSpinner";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
-
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 const NotificationPage = () => {
-  const isLoading = false;
-  const notifications = [
-    {
-      _id: "1",
-      from: {
-        _id: "1",
-        username: "johndoe",
-        profileImg: "/avatars/boy2.png",
-      },
-      type: "follow",
+  const queryClient = useQueryClient();
+  const { data: notifications, isLoading } = useQuery({
+    queryKey: ["notifications"],
+    queryFn: async () => {
+      try {
+        const res = await fetch("/api/notifications");
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Something went wrong!!!");
+        }
+        return data;
+      } catch (error) {
+        throw new Error(error);
+      }
     },
-    {
-      _id: "2",
-      from: {
-        _id: "2",
-        username: "janedoe",
-        profileImg: "/avatars/girl1.png",
-      },
-      type: "like",
+  });
+  const { mutate: deleteNotifications, error } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch("/api/notifications", {
+          method: "DELETE",
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Something went wrong!!!");
+        }
+        console.log("notifications data", data);
+        return data;
+      } catch (error) {
+        console.log("heerere");
+        throw new Error(error);
+      }
     },
-  ];
+    onSuccess: () => {
+      toast.success("Notification deleted successfully");
+      console.log("ssssss");
 
-  const deleteNotifications = () => {
-    alert("All notifications deleted");
-  };
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    },
+    onError: (error) => {
+      console.log("cliendndkljd");
+      toast.error(error.message);
+    },
+  });
 
   return (
     <>
@@ -56,41 +76,42 @@ const NotificationPage = () => {
             <LoadingSpinner size="lg" />
           </div>
         )}
-        {notifications?.length === 0 && (
+        {notifications?.data?.length === 0 ? (
           <div className="text-center p-4 font-bold">No notifications 🤔</div>
-        )}
-        {notifications?.map((notification) => (
-          <div className="border-b border-gray-700" key={notification._id}>
-            <div className="flex gap-2 p-4">
-              {notification.type === "follow" && (
-                <FaUser className="w-7 h-7 text-primary" />
-              )}
-              {notification.type === "like" && (
-                <FaHeart className="w-7 h-7 text-red-500" />
-              )}
-              <Link to={`/profile/${notification.from.username}`}>
-                <div className="avatar">
-                  <div className="w-8 rounded-full">
-                    <img
-                      src={
-                        notification.from.profileImg ||
-                        "/avatar-placeholder.png"
-                      }
-                    />
+        ) : (
+          notifications?.data.map((notification) => (
+            <div className="border-b border-gray-700" key={notification._id}>
+              <div className="flex gap-2 p-4">
+                {notification.type === "follow" && (
+                  <FaUser className="w-7 h-7 text-primary" />
+                )}
+                {notification.type === "like" && (
+                  <FaHeart className="w-7 h-7 text-red-500" />
+                )}
+                <Link to={`/profile/${notification.from.username}`}>
+                  <div className="avatar">
+                    <div className="w-8 rounded-full">
+                      <img
+                        src={
+                          notification.from.profileImg ||
+                          "/avatar-placeholder.png"
+                        }
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="flex gap-1">
-                  <span className="font-bold">
-                    @{notification.from.username}
-                  </span>{" "}
-                  {notification.type === "follow"
-                    ? "followed you"
-                    : "liked your post"}
-                </div>
-              </Link>
+                  <div className="flex gap-1">
+                    <span className="font-bold">
+                      @{notification.from.username}
+                    </span>{" "}
+                    {notification.type === "follow"
+                      ? "followed you"
+                      : "liked your post"}
+                  </div>
+                </Link>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </>
   );

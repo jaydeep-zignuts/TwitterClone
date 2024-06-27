@@ -294,7 +294,7 @@ export const getUserPosts = async (req, res) => {
     return res.status(200).json({
       status: 200,
       message: "user posts retrived",
-      err: posts,
+      data: posts,
     });
   } catch (err) {
     console.log(err);
