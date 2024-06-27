@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import LoadingSpinner from "./LoadingSpinner";
+import { formatPostDate } from "../../utils/date/index.js";
 const Post = ({ post }) => {
   const [comment, setComment] = useState("");
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
@@ -16,9 +17,8 @@ const Post = ({ post }) => {
   const isLiked = post.likes.includes(authUser.data._id);
   const isMyPost = authUser.data._id === post.user._id;
 
-  const formattedDate = "1h";
+  const formattedDate = formatPostDate(post.createdAt);
 
-  const isCommenting = false;
   const { mutate: deletePost, isPending } = useMutation({
     mutationFn: async () => {
       try {
@@ -75,6 +75,56 @@ const Post = ({ post }) => {
       toast.error(error.messgae);
     },
   });
+  const {
+    mutate: commentPost,
+    isPending: isCommenting,
+    error,
+  } = useMutation({
+    mutationFn: async () => {
+      try {
+        const res = await fetch(`/api/posts/comment/${post._id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ text: comment }),
+        });
+        const data = res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Something went wrong");
+        }
+        return data;
+      } catch (error) {
+        throw new Error(error);
+      }
+    },
+    onSuccess: (newComment) => {
+      toast.success("Comment posted successfully");
+      setComment("");
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      // queryClient.setQueryData(["posts"], (oldData) => {
+      //   // Check if oldData exists
+      //   if (!oldData) return;
+
+      //   const updatedPosts = oldData.data.map((p) => {
+      //     if (p._id === post._id) {
+      //       return { ...p, comments: [...p.comments, newComment] }; // add the new comment to the existing comments
+      //     }
+      //     return p;
+      //   });
+
+      //   return [
+      //     {
+      //       ...oldData,
+      //       data: updatedPosts,
+      //     },
+      //   ];
+      // });
+    },
+    onError: (error) => {
+      toast.error(error);
+    },
+  });
 
   const handleDeletePost = () => {
     deletePost();
@@ -82,6 +132,8 @@ const Post = ({ post }) => {
 
   const handlePostComment = (e) => {
     e.preventDefault();
+    if (isCommenting) return;
+    commentPost();
   };
 
   const handleLikePost = () => {
@@ -162,6 +214,7 @@ const Post = ({ post }) => {
                         No comments yet 🤔 Be the first one 😉
                       </p>
                     )}
+                    {console.log("post.comments", post.comments)}
                     {post.comments.map((comment) => (
                       <div key={comment._id} className="flex gap-2 items-start">
                         <div className="avatar">
