@@ -1,6 +1,6 @@
 import { generateTokenAndSerCookie } from "../lib/utils/generateToken.js";
 import User from "../models/user.model.js";
-import * as bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
 export const signup = async (req, res) => {
   try {
     const { fullName, username, email, password } = req.body;
