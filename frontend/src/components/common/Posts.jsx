@@ -6,17 +6,12 @@ const Posts = ({ feedType, username, userId }) => {
   const getPostEndpoint = () => {
     switch (feedType) {
       case "forYou":
-        console.log("forYou");
         return "/api/posts/all";
       case "following":
-        console.log("following");
-
         return "/api/posts/following";
       case "posts":
-        console.log("posts");
         return `/api/posts/user/${username}`;
       case "likes":
-        console.log("likes");
         return `/api/posts/likes/${userId}`;
       default:
         return "/api/posts/all";
@@ -32,10 +27,8 @@ const Posts = ({ feedType, username, userId }) => {
     queryKey: ["posts"],
     queryFn: async () => {
       try {
-        console.log("POST_ENDPOINT", POST_ENDPOINT);
         const res = await fetch(POST_ENDPOINT);
         const data = await res.json();
-        console.log("api anne", data);
         if (!res.ok) {
           throw new Error(data.error || "Something went wrong");
         }
@@ -58,7 +51,6 @@ const Posts = ({ feedType, username, userId }) => {
           <PostSkeleton />
         </div>
       )}
-      {/* {console.log("posts.data?.length", posts.data)} */}
       {!isLoading && !isRefetching && posts.data?.length === 0 && (
         <p className="text-center my-4">No posts in this tab. Switch 👻</p>
       )}

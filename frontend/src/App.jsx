@@ -22,14 +22,12 @@ function App() {
         }
 
         if (!res.ok) {
-          console.log("resnot");
           // throw new Error(data.error || "Something went wrong");
           return null;
         }
 
         return data;
       } catch (error) {
-        console.log("error", error);
         // throw new Error(error);
         return null;
       }

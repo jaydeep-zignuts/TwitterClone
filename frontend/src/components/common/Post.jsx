@@ -43,24 +43,18 @@ const Post = ({ post }) => {
         });
         const data = await res.json();
         if (!res.ok) {
-          console.log("error");
           // throw new Error(data.error || "something went wrong");
           return data.error;
         }
-        console.log("dataehjkl", data);
         return data;
       } catch (error) {
-        console.log("like error catch");
-
         // throw new Error(error);
         return data.error;
       }
     },
     onSuccess: (updatedLikes) => {
-      console.log("updatedLikes", updatedLikes);
       // queryClient.invalidateQueries({ queryKey: ["posts"] });
       queryClient.setQueryData(["posts"], (oldData) => {
-        console.log("oldData=-", oldData);
         const newData = oldData?.data?.map((p) => {
           if (p._id === post._id) {
             return { ...p, likes: updatedLikes };
@@ -74,7 +68,6 @@ const Post = ({ post }) => {
       });
     },
     onError: (error) => {
-      console.log(" error =-", error);
       toast.error(error.messgae);
     },
   });

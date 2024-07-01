@@ -98,7 +98,6 @@ export const getSuggestedUser = async (req, res) => {
     );
     let suggestedUsers = filterUsers.slice(0, 4);
     suggestedUsers.forEach((user) => (user.password = null));
-    console.log("suggestedUsers", suggestedUsers);
     return res.status(200).json({
       status: 200,
       message: "suggested user retrived",

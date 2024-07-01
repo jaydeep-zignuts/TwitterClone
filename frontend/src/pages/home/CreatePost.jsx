@@ -29,7 +29,6 @@ const CreatePost = () => {
         });
         const data = await res.json();
         if (!res.ok) {
-          console.log("first", data);
           throw new Error(data.error || "Something went wrong");
         }
         return data;

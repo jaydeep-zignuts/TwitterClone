@@ -14,12 +14,10 @@ const useUpdateProfile = () => {
           });
           const data = await res.json();
           if (!res.ok) {
-            console.log("not ok", data.error);
             throw new Error(data.error || "Somrthing Went Wrong");
           }
           return data;
         } catch (error) {
-          console.log("inside catch", error);
           throw new Error(error);
         }
       },
@@ -31,7 +29,6 @@ const useUpdateProfile = () => {
         ]);
       },
       onError: (error) => {
-        console.log("onError", error.message);
         toast.error(error.message);
       },
     });

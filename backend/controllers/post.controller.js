@@ -24,12 +24,9 @@ export const createPost = async (req, res) => {
       });
     }
     if (img) {
-      console.log("img here");
       const uploadedResponse = await cloudinary.uploader.upload(img);
-      console.log(uploadedResponse);
 
       img = await uploadedResponse.secure_url;
-      console.log(img);
     }
 
     const post = await new Post({
@@ -37,7 +34,6 @@ export const createPost = async (req, res) => {
       text: text,
       img: img,
     });
-    console.log("first", post);
     await post.save();
     return res.status(201).json({
       status: 201,

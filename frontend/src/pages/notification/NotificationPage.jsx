@@ -33,21 +33,17 @@ const NotificationPage = () => {
         if (!res.ok) {
           throw new Error(data.error || "Something went wrong!!!");
         }
-        console.log("notifications data", data);
         return data;
       } catch (error) {
-        console.log("heerere");
         throw new Error(error);
       }
     },
     onSuccess: () => {
       toast.success("Notification deleted successfully");
-      console.log("ssssss");
 
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
     onError: (error) => {
-      console.log("cliendndkljd");
       toast.error(error.message);
     },
   });

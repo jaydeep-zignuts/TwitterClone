@@ -11,7 +11,6 @@ export const signup = async (req, res) => {
         error: {},
       });
     }
-    console.log(req.body);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res
@@ -39,7 +38,6 @@ export const signup = async (req, res) => {
       });
     }
     const salt = await bcrypt.genSalt();
-    console.log("salt,", salt);
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = new User({
       fullName: fullName,
@@ -48,16 +46,11 @@ export const signup = async (req, res) => {
       password: hashedPassword,
     });
     await user.save();
-    console.log("first");
     const userData = user.toObject();
-    console.log("first, ", userData);
     if (user) {
       generateTokenAndSerCookie(user._id, res);
       delete userData.password;
-      console.log("message");
-      console.log("message");
-      console.log("message");
-      console.log("message");
+
       return res.status(201).json({
         status: 201,
         message: "User Created",
